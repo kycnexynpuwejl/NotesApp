@@ -47,6 +47,12 @@ public class Startup
                 options.Audience = "NotesWebAPI";
                 options.RequireHttpsMetadata = false;
             });
+        services.AddSwaggerGen(config =>
+        {
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            config.IncludeXmlComments(xmlPath);
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -56,6 +62,12 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
+        app.UseSwagger();
+        app.UseSwaggerUI(config =>
+        {
+            config.RoutePrefix = String.Empty;
+            config.SwaggerEndpoint("swagger/v1/swagger.json", "Notes API");
+        });
         app.UseCustomExceptionHandler();
         app.UseRouting();
         app.UseHttpsRedirection();
